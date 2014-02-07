@@ -4,8 +4,8 @@
 
 ======
 
-A Lua implementation of [http://www.hashids.org/](hashids).
-This was ported from and should be compatible with v0.3.1 of [http://www.hashids.org/php/](hashids.php).
+A Lua implementation of [hashids](http://www.hashids.org/).
+This was ported from and should be compatible with v0.3.1 of [hashids.php](http://www.hashids.org/php/).
 
 ## What is it?
 
