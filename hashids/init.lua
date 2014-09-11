@@ -1,9 +1,12 @@
-local ceil  = math.ceil;
-local floor = math.floor;
-local pow   = math.pow;
-local substr = string.sub;
-local strcat = table.concat;
-local str_switch_pos;
+local ceil   = math.ceil
+local floor  = math.floor
+local pow    = math.pow
+local substr = string.sub
+local upcase = string.upper
+local format = string.format
+local strcat = table.concat
+local push   = table.insert
+local str_switch_pos
 
 local ok, lib = pcall(require, "hashids.clib");
 if ok then
@@ -66,7 +69,7 @@ local function consistent_shuffle(alphabet, salt)
 	return alphabet;
 end
 
-function hash_mt:encrypt(...)
+function hash_mt:encode(...)
 	local numbers = {select(1,...)};
 	local numbers_size, hash_int = #numbers, 0;
 
@@ -121,7 +124,19 @@ function hash_mt:encrypt(...)
 	return ret;
 end
 
-function hash_mt:decrypt(hash)
+function hash_mt:encode_hex(str)
+	local pos, max, numbers = 0, #str, {}
+	while true do
+		local part = substr(str, pos + 1, pos + 12)
+		if part == "" then break end
+		pos = pos + #part
+		push(numbers, tonumber("1" .. part, 16))
+	end
+
+	return self:encode(unpack(numbers))
+end
+
+function hash_mt:decode(hash)
 	-- TODO validate input
 	
 	local parts, index = {}, 1;
@@ -155,7 +170,17 @@ function hash_mt:decrypt(hash)
 	return ret;
 end
 
+function hash_mt:decode_hex(hash)
+	local result, numbers = {}, self:decode(hash)
+	for _, number in ipairs(numbers) do
+		push(result, substr(format("%x", number), 2))
+	end
+
+	return upcase(strcat(result))
+end
+
 return {
+	VERSION = "1.0.0",
 	new = function(salt, min_hash_length, alphabet)
 		salt = salt or "";
 		min_hash_length = min_hash_length or 0;
