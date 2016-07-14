@@ -18,7 +18,7 @@ static int str_switch_pos(lua_State *L) {
 	return 1;
 }
 
-static const luaL_reg hashidslib[] = {
+static const luaL_Reg hashidslib[] = {
 	{"str_switch_pos",    str_switch_pos},
 	{NULL, NULL}
 };
