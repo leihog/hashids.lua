@@ -119,7 +119,7 @@ function hash_mt:encode(...)
 		excess = (ret:len() - self.min_hash_length);
 		if excess > 0 then
 			excess = (excess * 0.5);
-			ret = ret:sub(excess + 1, (excess + self.min_hash_length));
+			ret = ret:sub(floor(excess + 1), floor(excess + self.min_hash_length));
 		end
 	end
 
