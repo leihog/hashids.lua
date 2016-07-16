@@ -11,7 +11,8 @@ show_msg() {
 cd "$(dirname "$0")"
 
 show_msg $INFO "installing hashids"
-luarocks make hashids-*.rockspec
+luarocks make
+rm -rf hashids
 
 show_msg $INFO "testing"
 busted
