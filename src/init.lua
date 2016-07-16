@@ -6,6 +6,7 @@ local upcase = string.upper
 local format = string.format
 local strcat = table.concat
 local push   = table.insert
+local unpack = table.unpack or unpack
 local str_switch_pos
 
 local ok, lib = pcall(require, "hashids.clib");
@@ -71,6 +72,7 @@ end
 
 function hash_mt:encode(...)
 	local numbers = {select(1,...)};
+	if #numbers == 0 then return "" end
 	local numbers_size, hash_int = #numbers, 0;
 
 	for i, number in ipairs(numbers) do
@@ -125,6 +127,7 @@ function hash_mt:encode(...)
 end
 
 function hash_mt:encode_hex(str)
+	if str:match("%X") then return "" end
 	local pos, max, numbers = 0, #str, {}
 	while true do
 		local part = substr(str, pos + 1, pos + 12)
