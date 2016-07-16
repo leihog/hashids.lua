@@ -1,8 +1,7 @@
 package = 'hashids'
 version = '1.0.1-1'
 source = {
-  url = 'git://github.com/leihog/hashids.lua.git',
-  tag = 'v1.0.1',
+  url = 'git://github.com/un-def/hashids.lua.git',
 }
 description = {
   summary = 'A Lua implementation of hashids',
@@ -16,9 +15,9 @@ dependencies = {
 build = {
   type = 'builtin',
   modules = {
-    ['hashids.init'] = 'hashids/init.lua',
+    ['hashids.init'] = 'src/init.lua',
     ['hashids.clib'] = {
-        sources = 'hashids/clib.c'
+        sources = 'src/clib.c'
     },
   },
 }
