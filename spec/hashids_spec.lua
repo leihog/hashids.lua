@@ -1,13 +1,21 @@
 local hashids = require('hashids')
 local fixtures = require('fixtures')
-local fixtures_hex = require('fixtures_hex')
 
 
 unpack = unpack or table.unpack
 
 
-local function table_repr(tbl)
-  return '{' .. table.concat(tbl, ', ') .. '}'
+local function repr(value)
+  if type(value) == 'table' then
+    return '{' .. table.concat(value, ', ') .. '}'
+  end
+  return value
+end
+
+
+local function ensure_table(value)
+  if type(value) ~= 'table' then return {value} end
+  return value
 end
 
 
@@ -16,7 +24,7 @@ describe("test misc", function()
 
   it("can import clib.so", function()
     assert.has_no.errors(function() require('hashids.clib') end)
-    assert.is.equal(type(require('hashids.clib')), 'table')
+    assert.is_table(require('hashids.clib'))
   end)
 
   it("omitting salt arg is equivalent to empty salt string", function()
@@ -30,19 +38,13 @@ end)
 
 
 -- test encode/decode
-for salt, fixture in pairs(fixtures) do
+for salt, fixture in pairs(fixtures.numbers) do
 
   describe(("encode using salt '%s'"):format(salt), function()
     local hids = hashids.new(salt)
     for hash, numbers in pairs(fixture) do
-      local numbers_repr
-      if type(numbers) == 'table' then
-        numbers_repr = table_repr(numbers)
-      else
-        numbers_repr = tostring(numbers)
-        numbers = {numbers}
-      end
-      it(("should encode %s to '%s'"):format(numbers_repr, hash), function()
+      numbers = ensure_table(numbers)
+      it(("should encode %s to '%s'"):format(repr(numbers), hash), function()
         assert.is.equal(hids:encode(unpack(numbers)), hash)
       end)
     end
@@ -51,11 +53,8 @@ for salt, fixture in pairs(fixtures) do
   describe(("decode using salt '%s'"):format(salt), function()
     local hids = hashids.new(salt)
     for hash, numbers in pairs(fixture) do
-      if type(numbers) == 'number' then
-        numbers = {numbers}
-      end
-      local numbers_repr = table_repr(numbers)
-      it(("should decode '%s' to %s"):format(hash, numbers_repr), function()
+      numbers = ensure_table(numbers)
+      it(("should decode '%s' to %s"):format(hash, repr(numbers)), function()
         assert.is.same(hids:decode(hash), numbers)
       end)
     end
@@ -65,7 +64,7 @@ end
 
 
 -- test encode_hex/decode_hex
-for salt, fixture in pairs(fixtures_hex) do
+for salt, fixture in pairs(fixtures.hex) do
 
   describe(("encode_hex using salt '%s'"):format(salt), function()
     local hids = hashids.new(salt)
@@ -87,3 +86,17 @@ for salt, fixture in pairs(fixtures_hex) do
   end)
 
 end
+
+
+-- test min_hash_length
+describe("min_", function()
+  local hids1, hids2
+  for min = 1, 5 do
+    hids1 = hashids.new(nil, min)
+    hids2 = hashids.new('\\\\\\!SaLT!///', min)
+    for _, value in ipairs(fixtures.min_length) do
+      assert.truthy(#hids1:encode(value) >= min)
+      assert.truthy(#hids2:encode(value) >= min)
+    end
+  end
+end)
