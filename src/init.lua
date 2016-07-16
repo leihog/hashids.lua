@@ -138,7 +138,7 @@ end
 
 function hash_mt:decode(hash)
 	-- TODO validate input
-	
+
 	local parts, index = {}, 1;
 	for part in hash:gmatch("[^".. self.guards .."]+") do
 		parts[index] = part;
@@ -154,7 +154,7 @@ function hash_mt:decode(hash)
 
 	lottery = gcap(t, 0); -- put the first char in lottery
 	t = t:sub(2); -- then put the rest in t
-	
+
 	parts, index = {}, 1;
 	for part in t:gmatch("[^".. self.seps .."]+") do
 		parts[index] = part;
