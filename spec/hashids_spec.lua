@@ -104,3 +104,32 @@ describe("min hash length", function()
     end
   end
 end)
+
+
+-- test custom alphabet
+describe("constructor with custom alphabet", function()
+  local hids, salt, min_length, result
+  for _, alphabet in ipairs(fixtures.alphabet) do
+    if alphabet.error then
+      it("should raise error if there are < 16 unique chars", function()
+        assert.has_error(
+          function() hashids.new(nil, nil, alphabet.set) end,
+          'alphabet must contain at least 16 unique characters'
+        )
+      end)
+    else
+      it("should create hashids object and pass all checks", function()
+        if not alphabet.tests then
+          hashids.new(nil, nil, alphabet.set)
+        else
+          for _, test in ipairs(alphabet.tests) do
+            salt, min_length = unpack(test.constructor_args or {})
+            hids = hashids.new(salt, min_length, alphabet.set)
+            result = hids[test.method](hids, unpack(test.method_args))
+            assert.is.same(result, test.result)
+          end
+        end
+      end)
+    end
+  end
+end)
