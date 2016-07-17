@@ -89,14 +89,18 @@ end
 
 
 -- test min_hash_length
-describe("min_", function()
+describe("min hash length", function()
   local hids1, hids2
   for min = 1, 5 do
     hids1 = hashids.new(nil, min)
     hids2 = hashids.new('\\\\\\!SaLT!///', min)
     for _, value in ipairs(fixtures.min_length) do
-      assert.truthy(#hids1:encode(value) >= min)
-      assert.truthy(#hids2:encode(value) >= min)
+      value = ensure_table(value)
+      it(("of value '%s' should be greater or equal than %d"):format(
+          repr(value), min), function()
+        assert.truthy(#hids1:encode(unpack(value)) >= min)
+        assert.truthy(#hids2:encode(unpack(value)) >= min)
+      end)
     end
   end
 end)
