@@ -187,36 +187,27 @@ return {
 	new = function(salt, min_hash_length, alphabet)
 		salt = salt or "";
 		min_hash_length = min_hash_length or 0;
-
-		-- TODO prevent sting -> table -> string conversions
-		if not alphabet then
-			alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-		else
-			local alphabet_set = {}
-			local alphabet_array = {}
-			alphabet:gsub(".", function(c)
-				if not alphabet_set[c] then
-					alphabet_set[c] = true;
-					table.insert(alphabet_array, c)
-				end
-			end)
-			if #alphabet_array < 16 then
-				error("alphabet must contain at least 16 unique characters")
-			end
-			alphabet = table.concat(alphabet_array)
-		end
+		alphabet = alphabet or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
 		local tmp_seps, tmp_alpha, c = "", "";
 		local seps = "cfhistuCFHISTU";
 
-		for i = 1, alphabet:len() do
-			c = alphabet:sub(i,i);
-
-			if seps:find(c, 1, true) then
-				tmp_seps = tmp_seps .. c;
-			else
-				tmp_alpha = tmp_alpha .. c;
+		for i = 1, #seps do
+			c = seps:sub(i, i)
+			if alphabet:find(c, 1, true) then
+				tmp_seps = tmp_seps .. c
 			end
+		end
+
+		for i = 1, #alphabet do
+			c = alphabet:sub(i,i)
+			if not tmp_seps:find(c, 1, true) and alphabet:find(c, 1, true) == i then
+				tmp_alpha = tmp_alpha .. c
+			end
+		end
+
+		if #tmp_alpha + #tmp_seps < 16 then
+			error("alphabet must contain at least 16 unique characters")
 		end
 
 		seps = consistent_shuffle(tmp_seps, salt);
