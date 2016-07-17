@@ -1,11 +1,12 @@
 package = 'hashids'
-version = '1.0.1-1'
+version = '1.0.2-1'
 source = {
   url = 'git://github.com/un-def/hashids.lua.git',
+  tag = 'v1.0.2',
 }
 description = {
   summary = 'A Lua implementation of hashids',
-  homepage = 'https://github.com/leihog/hashids.lua',
+  homepage = 'https://github.com/un-def/hashids.lua',
   license = 'MIT',
   maintainer = 'un.def <un.def@ya.ru>',
 }
