@@ -1,7 +1,7 @@
 hashids.lua
 ===========
 
-[![Build Status](https://travis-ci.org/un-def/hashids.lua.svg?branch=master)](https://travis-ci.org/un-def/hashids.lua)
+[![Travis](https://img.shields.io/travis/un-def/hashids.lua.svg?maxAge=7200)](https://travis-ci.org/un-def/hashids.lua)
 
 A Lua implementation of [hashids][hashids].
 
@@ -50,6 +50,12 @@ Although `--local` option allows to install packages under unprivileged user, it
 
 
 
+### License
+
+See [LICENSE][license].
+
+
+
 [hashids]: http://hashids.org/
 [leihog_hashids]: https://github.com/leihog/hashids.lua
 [leihog_twitter]: https://twitter.com/leihog
@@ -57,3 +63,4 @@ Although `--local` option allows to install packages under unprivileged user, it
 [busted]: https://olivinelabs.com/busted/
 [luarocks]: https://luarocks.org/
 [luamb]: https://github.com/un-def/luamb
+[license]: https://github.com/un-def/hashids.lua/blob/master/LICENSE
