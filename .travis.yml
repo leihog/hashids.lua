@@ -13,6 +13,7 @@ before_install:
   - pip install hererocks
   - hererocks luaenv --$LUA --luarocks latest
   - source luaenv/bin/activate
+  - luarocks install penlight 1.3.2
   - luarocks install busted
 
 install:
