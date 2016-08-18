@@ -6,6 +6,7 @@ local upcase = string.upper
 local format = string.format
 local strcat = table.concat
 local push   = table.insert
+local unpack = table.unpack or unpack
 local str_switch_pos
 
 local ok, lib = pcall(require, "hashids.clib");
@@ -71,6 +72,7 @@ end
 
 function hash_mt:encode(...)
 	local numbers = {select(1,...)};
+	if #numbers == 0 then return "" end
 	local numbers_size, hash_int = #numbers, 0;
 
 	for i, number in ipairs(numbers) do
@@ -117,7 +119,7 @@ function hash_mt:encode(...)
 		excess = (ret:len() - self.min_hash_length);
 		if excess > 0 then
 			excess = (excess * 0.5);
-			ret = ret:sub(excess + 1, (excess + self.min_hash_length));
+			ret = ret:sub(math.floor(excess + 1), math.floor(excess + self.min_hash_length));
 		end
 	end
 
@@ -125,6 +127,7 @@ function hash_mt:encode(...)
 end
 
 function hash_mt:encode_hex(str)
+	if str:match("%X") then return "" end
 	local pos, max, numbers = 0, #str, {}
 	while true do
 		local part = substr(str, pos + 1, pos + 12)
@@ -138,7 +141,7 @@ end
 
 function hash_mt:decode(hash)
 	-- TODO validate input
-	
+
 	local parts, index = {}, 1;
 	for part in hash:gmatch("[^".. self.guards .."]+") do
 		parts[index] = part;
@@ -154,7 +157,7 @@ function hash_mt:decode(hash)
 
 	lottery = gcap(t, 0); -- put the first char in lottery
 	t = t:sub(2); -- then put the rest in t
-	
+
 	parts, index = {}, 1;
 	for part in t:gmatch("[^".. self.seps .."]+") do
 		parts[index] = part;
@@ -180,24 +183,31 @@ function hash_mt:decode_hex(hash)
 end
 
 return {
-	VERSION = "1.0.0",
+	VERSION = "1.0.2",
 	new = function(salt, min_hash_length, alphabet)
 		salt = salt or "";
 		min_hash_length = min_hash_length or 0;
-		alphabet = alphabet or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-		-- TODO make sure alphabet doesn't contain duplicates.
+		alphabet = alphabet or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
 		local tmp_seps, tmp_alpha, c = "", "";
 		local seps = "cfhistuCFHISTU";
 
-		for i = 1, alphabet:len() do
-			c = alphabet:sub(i,i);
-
-			if seps:find(c, 1, true) then
-				tmp_seps = tmp_seps .. c;
-			else
-				tmp_alpha = tmp_alpha .. c;
+		for i = 1, #seps do
+			c = seps:sub(i, i)
+			if alphabet:find(c, 1, true) then
+				tmp_seps = tmp_seps .. c
 			end
+		end
+
+		for i = 1, #alphabet do
+			c = alphabet:sub(i,i)
+			if not tmp_seps:find(c, 1, true) and alphabet:find(c, 1, true) == i then
+				tmp_alpha = tmp_alpha .. c
+			end
+		end
+
+		if #tmp_alpha + #tmp_seps < 16 then
+			error("alphabet must contain at least 16 unique characters")
 		end
 
 		seps = consistent_shuffle(tmp_seps, salt);
