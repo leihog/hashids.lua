@@ -1,7 +1,7 @@
 package = 'hashids'
 version = '1.0.2-1'
 source = {
-  url = 'git://github.com/un-def/hashids.lua.git',
+  url = 'git://github.com/leihog/hashids.lua.git',
   tag = 'v1.0.2',
 }
 description = {
