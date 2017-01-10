@@ -1,1 +1,3 @@
+src/clib.o
 src/clib.so
+hashids/*
