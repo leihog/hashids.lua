@@ -1,8 +1,6 @@
 
-![hashids](http://www.hashids.org.s3.amazonaws.com/public/img/hashids.png
-"Hashids")
-
-======
+Hashids.lua
+=======
 
 A Lua implementation of [hashids](http://www.hashids.org/).
 
@@ -31,7 +29,7 @@ All integers need to be greater than or equal to zero.
 
 ## Install
 
-To install hashids.lua edit the include paths in `Makefile` to match your system and then type `make`. After compiling copy the `hashids/` folder to your lua lib path usually `/usr/local/lib/lua/5.1` or `/usr/lib/lua/5.1`.
+To install hashids.lua edit the paths in `Makefile` to match your system and then type `make && make install`. 
 
 
 ### Using hashids without C library
@@ -51,9 +49,9 @@ You can pass a unique salt value so your hashes differ from everyone else's.
 I use **this is my salt** as an example.
 
 
-	local hashids = require("hashids");
-	local h = hashids.new("this is my salt")
-	hash = h:encode(1337)
+    local hashids = require("hashids");
+    local h = hashids.new("this is my salt")
+    hash = h:encode(1337)
 
 
 `hash` is now going to be `Wzo`
@@ -62,9 +60,9 @@ I use **this is my salt** as an example.
 You can also encode multiple numbers in to one hash.
 In this example we set the minimum hash length to 8.
 
-	local hashids = require("hashids");
-	local h = hashids.new("this is my salt", 8)
-	hash = h:encode(1337, 10, 666)
+    local hashids = require("hashids");
+    local h = hashids.new("this is my salt", 8)
+    hash = h:encode(1337, 10, 666)
 
 
 `hash` is now going to be `xZRTxFPx`
@@ -76,15 +74,15 @@ In order to decode a hash we need to setup hashids with the same parameters used
 for encoding. In our above example we specified the salt **this is my salt** so
 we use that here as well.
 
-	local h = hashids.new("this is my salt")
-	local numbers = h:decode("Wzo")
+    local h = hashids.new("this is my salt")
+    local numbers = h:decode("Wzo")
 
 `numbers` is now going to be a table `{ 1 = 1337 }`
 
 Decoding a hash made from multiple numbers using a minimum hash length of 8.
 
-	local h = hashids.new("this is my salt", 8);
-	local numbers = h:decode("yamleqbk");
+    local h = hashids.new("this is my salt", 8);
+    local numbers = h:decode("yamleqbk");
 
 `numbers` now contains the table `{ 1 = 1337, 2 = 10, 3 = 666 }`
 
@@ -94,14 +92,14 @@ Decoding a hash made from multiple numbers using a minimum hash length of 8.
 The convenience methods encode_hex/decode_hex allow us to work with
 hexadecimals without first converting them.
 
-	local h = hashids.new("this is my salt")
-	local hash = h:encode_hex("0FF")
+    local h = hashids.new("this is my salt")
+    local hash = h:encode_hex("0FF")
 
 
 `hash` now contains the string `"7WPd"`
 
-	local h = hashids.new("this is my salt")
-	local hex = h:decode_hex("7WPd")
+    local h = hashids.new("this is my salt")
+    local hex = h:decode_hex("7WPd")
 
 `hex` contains the string `"0FF"`
 
@@ -109,15 +107,15 @@ hexadecimals without first converting them.
 The caveat is that all hexadecimals are assumed to be strings.
 The following will not work
 
-	local h = hashids.new("this is my salt")
-	local hash = h:encode_hex(0x0FF)
+    local h = hashids.new("this is my salt")
+    local hash = h:encode_hex(0x0FF)
 
 Since a hexadecimal is a number you can pass it to encode, but encode and
 encode_hex will not generate the same result.
 
-	local h = hashids.new("this is my salt")
-	hash = h:encode(0x0FF) -- hash = "K6y"
-	hash = h:encode_hex("0FF") -- hash = "7WPd"
+    local h = hashids.new("this is my salt")
+    hash = h:encode(0x0FF) -- hash = "K6y"
+    hash = h:encode_hex("0FF") -- hash = "7WPd"
 
 
 ### Custom alphabet
@@ -125,9 +123,9 @@ encode_hex will not generate the same result.
 It's also possible to set a custom alphabet for your hashes.
 The default alphabet contains all lowercase and uppercase letters and numbers.
 
-	local h = hashids.new("this is my salt", 8, "abcdefghijklmnopqrstuvwxyz")
-	print(h:encode(1337))
-	
+    local h = hashids.new("this is my salt", 8, "abcdefghijklmnopqrstuvwxyz")
+    print(h:encode(1337))
+    
 will print `yamleqbk`
 
 
@@ -136,11 +134,17 @@ will print `yamleqbk`
 This code was written with the intent of placing created hashes in visible places - like the URL. Which makes it unfortunate if generated hashes accidentally formed a bad word.
 
 Therefore, the algorithm tries to avoid generating most common English curse words. This is done by never placing the following letters next to each other:
-	
-	c, C, s, S, f, F, h, H, u, U, i, I, t, T
+    
+    c, C, s, S, f, F, h, H, u, U, i, I, t, T
 
 
 ## Changelog
+
+**1.0.5**
+
+ - Fixes issue with min_hash_length in 5.3 (submitted by un.def)
+ - Use table.unpack if unpack is not available. Affects 5.3 and 5.2 without LUA_COMPAT_UNPACK. (submitted by un.def)
+ - Fixed bug in clib that would hinder functions from registering. Affected Lua > 5.1 (submitted by un.def)
 
 **1.0.0**
 
