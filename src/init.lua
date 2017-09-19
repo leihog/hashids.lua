@@ -183,7 +183,7 @@ function hash_mt:decode_hex(hash)
 end
 
 return {
-    VERSION = "1.0.5",
+    VERSION = "1.0.6",
     new = function(salt, min_hash_length, alphabet)
         salt = salt or "";
         min_hash_length = min_hash_length or 0;
