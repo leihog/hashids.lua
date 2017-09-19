@@ -23,7 +23,9 @@ static const luaL_Reg hashidslib[] = {
     {NULL, NULL}
 };
 
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM == 501
+#if !defined(luaL_newlibtable) && \
+    (!defined(LUA_VERSION_NUM) || LUA_VERSION_NUM < 502)
+
 /*
  * http://lua-users.org/wiki/CompatibilityWithLuaFive
  */
